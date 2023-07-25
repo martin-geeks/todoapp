@@ -26,7 +26,14 @@ class _TodoListPageState extends State<TodoListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todo List'),
+        title: const Text('Todo List',
+        style: TextStyle(
+          color: Colors.black,
+        ),
+        ),
+        backgroundColor:Colors.white,
+        shadowColor: null,
+
       ),
       body: RefreshIndicator(
         onRefresh: fetchTodo,
@@ -77,9 +84,14 @@ class _TodoListPageState extends State<TodoListPage> {
     if (response.statusCode == 200) {
       //remove the content;
       print(response.body);
+      final filtered = items.where((element) => element['_id'] != id).toList();
+      print(filtered);
+      setState(() {
+        items = filtered;
+      });
     } else {
       //not deleted
-      print(response.body);
+      showErrorMessage('Could not delete');
     }
   }
 
@@ -100,10 +112,22 @@ class _TodoListPageState extends State<TodoListPage> {
       });
     } else {
       //Show error
+      showErrorMessage('Could not delete');
     }
     setState(() {
       isLoading:
       false;
     });
+    
+  }
+  void showErrorMessage(String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: const Color.fromARGB(244, 255, 36, 36),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
